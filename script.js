@@ -1,5 +1,8 @@
 const API_KEY = "ed6bcd172fa44c8b90a4f7a8ebce52e6";
-const url = "https://newsapi.org/v2/everything?q";
+const url = "https://newsapi.org/v2/everything?q=";
+
+
+// const proxyUrl = "https://cors-anywhere.herokuapp.com/";
 
 window.addEventListener("load", () => fetchNews("India"));
 
@@ -10,17 +13,30 @@ function reload() {
 async function fetchNews(query) {
     try {
         showLoading(true);
-        const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
-        const data = await res.json();
+        console.log(`Fetching news for: ${query}`);
 
-        if (data.articles.length === 0) {
+        // Ensure correct API URL format
+        const apiUrl = `${url}${encodeURIComponent(query)}&apiKey=${API_KEY}`;
+
+        const res = await fetch(apiUrl);
+
+        // Handle HTTP errors
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log("API Response:", data); // Debugging
+
+        if (!data.articles || data.articles.length === 0) {
             alert("No news found for this topic. Try another search.");
+            return;
         }
 
         bindData(data.articles);
     } catch (error) {
         console.error("Error fetching news:", error);
-        alert("Failed to fetch news. Please try again later.");
+        alert("Failed to fetch news. Check API key and console logs.");
     } finally {
         showLoading(false);
     }
