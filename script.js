@@ -13,6 +13,8 @@ async function fetchNews(query) {
         const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
         const data = await res.json();
 
+        console.log(data); // Log the entire response
+
         if (data.articles.length === 0) {
             alert("No news found for this topic. Try another search.");
         }
@@ -25,6 +27,7 @@ async function fetchNews(query) {
         showLoading(false);
     }
 }
+
 
 function bindData(articles) {
     const cardsContainer = document.getElementById("cards-container");
