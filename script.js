@@ -10,7 +10,7 @@ function reload() {
 async function fetchNews(query) {
     try {
         showLoading(true);
-        const response = await fetch(`${BASE_URL}${query}&apiKey=${API_KEY}`);
+      const response = await fetch(`${proxyUrl}${BASE_URL}${query}&apiKey=${API_KEY}`);
         const data = await response.json();
 
         console.log(data); // Log the entire response
