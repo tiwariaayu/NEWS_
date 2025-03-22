@@ -1,5 +1,5 @@
 const API_KEY = "ed6bcd172fa44c8b90a4f7a8ebce52e6";
-const BASE_URL = "https://newsapi.org/v2/everything";
+const url = "https://newsapi.org/v2/everything?q=";
 
 window.addEventListener("load", () => fetchNews("India"));
 
@@ -8,33 +8,9 @@ function reload() {
 }
 
 async function fetchNews(query) {
-    try {
-        showLoading(true);
-      const response = await fetch(`${proxyUrl}${BASE_URL}${query}&apiKey=${API_KEY}`);
-        const data = await response.json();
-
-        console.log(data); // Log the entire response
-
- async function fetchNews(query) {
-    try {
-        showLoading(true);
-        const response = await fetch(`${BASE_URL}?q=${query}&apiKey=${API_KEY}`);
-        const data = await response.json();
-
-        console.log(data);
-
-        if (!data.articles || data.articles.length === 0) {
-            alert("No news found for this topic. Try another search.");
-            return;
-        }
-
-        bindData(data.articles);
-    } catch (error) {
-        console.error("Error fetching news:", error);
-        alert("Failed to fetch news. Please try again later.");
-    } finally {
-        showLoading(false);
-    }
+    const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+    const data = await res.json();
+    bindData(data.articles);
 }
 
 function bindData(articles) {
@@ -58,17 +34,15 @@ function fillDataInCard(cardClone, article) {
     const newsDesc = cardClone.querySelector("#news-desc");
 
     newsImg.src = article.urlToImage;
-    newsTitle.innerHTML = article.title || "No title available";
-    newsDesc.innerHTML = article.description || "No description available";
+    newsTitle.innerHTML = article.title;
+    newsDesc.innerHTML = article.description;
 
     const date = new Date(article.publishedAt).toLocaleString("en-US", {
         timeZone: "Asia/Jakarta",
     });
 
-    newsSource.innerHTML = `${article.source.name || "Unknown Source"} · ${date}`;
+    newsSource.innerHTML = `${article.source.name} · ${date}`;
 
-    // Make the entire card clickable
-    cardClone.firstElementChild.style.cursor = "pointer";
     cardClone.firstElementChild.addEventListener("click", () => {
         window.open(article.url, "_blank");
     });
@@ -77,12 +51,9 @@ function fillDataInCard(cardClone, article) {
 let curSelectedNav = null;
 function onNavItemClick(id) {
     fetchNews(id);
-
-    if (curSelectedNav) {
-        curSelectedNav.classList.remove("active");
-    }
-
-    curSelectedNav = document.getElementById(id);
+    const navItem = document.getElementById(id);
+    curSelectedNav?.classList.remove("active");
+    curSelectedNav = navItem;
     curSelectedNav.classList.add("active");
 }
 
@@ -90,17 +61,9 @@ const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("search-text");
 
 searchButton.addEventListener("click", () => {
-    const query = searchText.value.trim();
+    const query = searchText.value;
     if (!query) return;
     fetchNews(query);
-    if (curSelectedNav) curSelectedNav.classList.remove("active");
+    curSelectedNav?.classList.remove("active");
     curSelectedNav = null;
 });
-
-// Show loading state while fetching news
-function showLoading(isLoading) {
-    const cardsContainer = document.getElementById("cards-container");
-    if (isLoading) {
-        cardsContainer.innerHTML = "<h2>Loading news...</h2>";
-    }
-}
