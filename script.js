@@ -15,8 +15,17 @@ async function fetchNews(query) {
 
         console.log(data); // Log the entire response
 
-        if (data.articles.length === 0) {
+ async function fetchNews(query) {
+    try {
+        showLoading(true);
+        const response = await fetch(`${BASE_URL}?q=${query}&apiKey=${API_KEY}`);
+        const data = await response.json();
+
+        console.log(data);
+
+        if (!data.articles || data.articles.length === 0) {
             alert("No news found for this topic. Try another search.");
+            return;
         }
 
         bindData(data.articles);
