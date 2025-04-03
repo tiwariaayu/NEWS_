@@ -79,3 +79,10 @@ searchButton.addEventListener("click", () => {
     curSelectedNav?.classList.remove("active");
     curSelectedNav = null;
 });
+function showLoading(isLoading) {
+    const cardsContainer = document.getElementById("cards-container");
+    if (isLoading) {
+        cardsContainer.innerHTML = "<h2>Loading news...</h2>";
+    }
+}
+
